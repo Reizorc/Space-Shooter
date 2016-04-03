@@ -9,7 +9,7 @@ public:
 	Meteroite();
 	void updatePosition();
 	bool isAlive = true;
-	int moveSpeed = 3;
+	int moveSpeed = 5;
 	int hp;
 protected:
 private:

@@ -7,6 +7,7 @@
 #include "Space Shooter/Missile.h"
 #include "Space Shooter/Entity.h"
 #include <vector>
+#include "Space Shooter\Enemy.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ int main()
 	int counter2;
 	sf::Clock clockMissile;
 	sf::Clock clockMeteorite;
+	sf::Clock clockEnemy;
 
 	srand(time(0));
 
@@ -35,14 +37,20 @@ int main()
 
 	Meteroite meteorite1;
 
+	vector<Enemy>::const_iterator iterEnemy;
+	vector<Enemy> enemyArray;
+
+	Enemy enemy1;
+
 	vector<missile>::const_iterator iterMissile;
 	vector<missile> missileArray;
 
 	missile missile1;
 
 	bool canShoot = true;
-	float tempsEcoule;
+	float tempsMeteorite;
 	float tempsRecharge;
+	float tempsEnemy;
 
 
 	while (window.isOpen())
@@ -67,8 +75,9 @@ int main()
 		window.clear();
 
 		//Gestion du temps
-		tempsEcoule = clockMeteorite.getElapsedTime().asSeconds();
+		tempsMeteorite = clockMeteorite.getElapsedTime().asSeconds();
 		tempsRecharge = clockMissile.getElapsedTime().asSeconds();
+		tempsEnemy = clockEnemy.getElapsedTime().asSeconds();
 
 		//COLLISION
 		counter = 0;
@@ -77,7 +86,6 @@ int main()
 			for (iterMeteorite = meteoriteArray.begin(); iterMeteorite != meteoriteArray.end(); iterMeteorite++) {
 
 				if (missileArray[counter].rect.getGlobalBounds().intersects(meteoriteArray[counter2].circ.getGlobalBounds())) {
-					cout << "TOUCHE" << endl;
 					meteoriteArray[counter2].hp -= 5;
 					missileArray[counter].isDestroyed = true;
 				}
@@ -90,7 +98,21 @@ int main()
 			counter++;
 		}
 
-		//Supprimer météorite détruites
+		//COLLISION MISSILE/ENEMY
+		counter = 0;
+		for (iterEnemy = enemyArray.begin(); iterEnemy != enemyArray.end(); iterEnemy++) {
+			counter2 = 0;
+			for (iterMissile = missileArray.begin(); iterMissile != missileArray.end(); iterMissile++){
+				if (enemyArray[counter].rect.getGlobalBounds().intersects(missileArray[counter2].rect.getGlobalBounds())) {
+					cout << "TOUCHE" << endl;
+					enemyArray[counter].hp -= 5;
+				}
+			counter2++;
+		}
+			counter++;
+		}
+
+		//Supprimer météorites détruites
 		counter = 0;
 		for (iterMeteorite = meteoriteArray.begin(); iterMeteorite != meteoriteArray.end(); iterMeteorite++)
 		{
@@ -136,20 +158,34 @@ int main()
 		}
 
 		//Créer météorites
-		if (tempsEcoule >= 2) {
+		if (tempsMeteorite >= 2) {
 			meteorite1.circ.setPosition(rand() % 390 - 10, -20);
 			meteoriteArray.push_back(meteorite1);
+			cout << "Nombres de meteorites : " << meteoriteArray.size() << endl;
 			clockMeteorite.restart();
 		}
-
 		//Dessiner météorites
 		counter = 0;
 		for (iterMeteorite = meteoriteArray.begin(); iterMeteorite != meteoriteArray.end(); iterMeteorite++) {
-			if (counter <= 5) { //pas plus de 5 météorites en même temps
 				meteoriteArray[counter].updatePosition();
 				window.draw(meteoriteArray[counter].circ);
 				counter++;
-			}
+		}
+
+		//Créer vaisseaux ennemis
+		if (tempsEnemy >= 1) {
+			enemy1.rect.setPosition(rand() % 390 - 10, -20);
+			enemyArray.push_back(enemy1);
+			cout <<"Nombres d'ennemis : "<< enemyArray.size() << endl;
+			clockEnemy.restart();
+		}
+
+		//Dessiner vaisseaux ennemis
+		counter = 0;
+		for (iterEnemy = enemyArray.begin(); iterEnemy != enemyArray.end(); iterEnemy++) {
+			enemyArray[counter].updatePosition();
+			window.draw(enemyArray[counter].rect);
+			counter++;
 		}
 
 		player.movement(); //Player movement
