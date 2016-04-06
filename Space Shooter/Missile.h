@@ -11,6 +11,7 @@ public:
 	void updatePosition();
 	bool isDestroyed;
 	int moveSpeed = 10;
+	int damage;
 protected:
 private:
 };

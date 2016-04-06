@@ -3,7 +3,7 @@
 class Enemy : public Entity
 {
 public:
-	Enemy();
+	Enemy(int a);
 	void updatePosition();
 	bool isAlive = true;
 	int moveSpeed = 3;

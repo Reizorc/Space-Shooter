@@ -5,6 +5,7 @@ missile::missile()
 	rect.setSize(sf::Vector2f(5, 10));
 	rect.setFillColor(sf::Color::Red);
 	isDestroyed = false;
+	damage = 5;
 }
 
 void missile::updatePosition() {
